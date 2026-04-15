@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Hub</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <style>
+html,body{margin:0;padding:0;height:100%;font-family:'DM Sans',sans-serif}
+*{box-sizing:border-box}
+.mono{font-family:'Space Mono',monospace}
+.app-shell{height:100%;width:100%;overflow-y:auto;overflow-x:hidden;background:linear-gradient(135deg, #0a0e27 0%, #1a0f2e 25%, #2d1b4e 50%, #0f1429 75%, #0a0e27 100%)}
+.nav-item{transition:all .2s}
+.nav-item:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(255,107,53,.15)}
+.nav-item.active-nav{ring:2px;box-shadow:0 0 0 2px var(--c-accent)}
+.fade-in{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.task-item{animation:slideIn .2s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.pulse-ring{animation:pulseRing 1.5s ease infinite}
+@keyframes pulseRing{0%{box-shadow:0 0 0 0 rgba(255,107,53,.4)}70%{box-shadow:0 0 0 10px rgba(255,107,53,0)}100%{box-shadow:0 0 0 0 rgba(255,107,53,0)}}
+.quiz-opt{transition:all .15s}
+.quiz-opt:hover{transform:scale(1.02)}
+.chess-btn{transition:all .1s;user-select:none}
+.chess-btn:active{transform:scale(.96)}
+.gradient-accent{background:linear-gradient(135deg, var(--c-accent) 0%, var(--c-secondary) 100%)}
+.glow-text{text-shadow:0 0 20px rgba(255,107,53,.3)}
+:root{--c-bg:#0a0e27;--c-surface:#0f1429;--c-text:#e8e6e3;--c-accent:#ff6b9d;--c-accent2:#00d4ff;--c-accent3:#00ff88;--c-accent4:#ffd700;--c-accent5:#ff6b35}
+input,textarea,select{color:var(--c-text);background:var(--c-bg);border:1px solid #2a2d3a}
+input:focus,textarea:focus{outline:none;border-color:var(--c-accent)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--c-bg)}
+::-webkit-scrollbar-thumb{background:var(--c-accent);border-radius:3px}
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div class="app-shell" id="app" style="background:var(--c-bg);color:var(--c-text)">
+   <!-- Header -->
+   <header style="background:linear-gradient(90deg, #0f1429 0%, #1a0a3e 50%, #0f1429 100%);border-bottom:2px solid var(--c-accent)" class="sticky top-0 z-50 shadow-lg">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+     <div class="flex items-center gap-2">
+      <div style="background:var(--c-accent)" class="w-8 h-8 rounded-lg flex items-center justify-center">
+       <i data-lucide="graduation-cap" style="width:18px;height:18px;color:#fff"></i>
+      </div>
+      <h1 id="siteTitle" class="text-lg font-bold" style="color:var(--c-text)">Student Hub</h1>
+     </div>
+     <p id="welcomeMsg" class="text-xs hidden sm:block" style="color:#888">Your all-in-one student toolkit</p>
+    </div>
+   </header><!-- Navigation -->
+   <nav class="max-w-5xl mx-auto px-4 py-4">
+    <div class="flex gap-2 overflow-x-auto pb-2" id="navBar">
+     <button onclick="showPage('todo')" class="nav-item active-nav flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap" style="background:linear-gradient(135deg, #ff6b9d 0%, #ff8fb3 100%);color:#fff" data-nav="todo"> <i data-lucide="check-square" style="width:14px;height:14px"></i>Tasks </button> <button onclick="showPage('timer')" class="nav-item flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap" style="background:linear-gradient(135deg, #00d4ff 0%, #00e5ff 100%);color:#000" data-nav="timer"> <i data-lucide="timer" style="width:14px;height:14px"></i>Pomodoro </button> <button onclick="showPage('quiz')" class="nav-item flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap" style="background:linear-gradient(135deg, #00ff88 0%, #1fffad 100%);color:#000" data-nav="quiz"> <i data-lucide="help-circle" style="width:14px;height:14px"></i>Quiz </button> <button onclick="showPage('schedule')" class="nav-item flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap" style="background:linear-gradient(135deg, #ffd700 0%, #ffde4d 100%);color:#000" data-nav="schedule"> <i data-lucide="calendar" style="width:14px;height:14px"></i>Schedule </button> <button onclick="showPage('notes')" class="nav-item flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap" style="background:linear-gradient(135deg, #ff6b35 0%, #ff8f5e 100%);color:#fff" data-nav="notes"> <i data-lucide="file-text" style="width:14px;height:14px"></i>Notes </button> <button onclick="showPage('quotes')" class="nav-item flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap" style="background:linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%);color:#fff" data-nav="quotes"> <i data-lucide="sparkles" style="width:14px;height:14px"></i>Quotes </button> <button onclick="showPage('chess')" class="nav-item flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap" style="background:linear-gradient(135deg, #f87171 0%, #fb7185 100%);color:#fff" data-nav="chess"> <i data-lucide="crown" style="width:14px;height:14px"></i>Chess </button> <button onclick="showPage('game')" class="nav-item flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap" style="background:linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%);color:#000" data-nav="game"> <i data-lucide="gamepad-2" style="width:14px;height:14px"></i>Math Game </button>
+    </div>
+   </nav>
+   <main class="max-w-5xl mx-auto px-4 pb-8">
+    <!-- TODO PAGE -->
+    <section id="page-todo" class="page fade-in">
+     <div style="background:linear-gradient(135deg, #ff6b9d 0%, #ff8fb3 100%);border-radius:12px;padding:20px" class="rounded-xl">
+      <h2 class="font-bold text-base mb-4 flex items-center gap-2" style="color:#fff"><i data-lucide="check-square" style="width:18px;height:18px;color:#fff"></i>Homework Tracker</h2>
+      <form onsubmit="addTask(event)" class="flex gap-2 mb-4">
+       <label for="taskInput" class="sr-only">New task</label> <input id="taskInput" type="text" placeholder="Add a task..." class="flex-1 px-3 py-2 rounded-lg text-sm" style="background:#fff;color:#000;border:none" required> <button type="submit" style="background:#fff;color:#ff6b9d" class="px-4 py-2 rounded-lg text-sm font-medium font-bold">Add</button>
+      </form>
+      <ul id="taskList" class="space-y-2"></ul>
+      <p id="taskEmpty" class="text-center text-xs py-6" style="color:#fff">No tasks yet — add one above!</p>
+     </div>
+    </section><!-- TIMER PAGE -->
+    <section id="page-timer" class="page fade-in hidden">
+     <div style="background:linear-gradient(135deg, #00d4ff 0%, #00e5ff 100%);border-radius:12px;padding:20px" class="text-center">
+      <h2 class="font-bold text-base mb-2 flex items-center justify-center gap-2" style="color:#000"><i data-lucide="timer" style="width:18px;height:18px;color:#000"></i>Pomodoro Timer</h2>
+      <div class="flex gap-2 justify-center mb-4 flex-wrap">
+       <label for="timerFocusMins" class="sr-only">Focus minutes</label> <input id="timerFocusMins" type="number" min="1" max="60" value="25" class="w-20 px-2 py-1 rounded text-xs text-center" style="background:#fff;color:#000;border:none" onchange="updateTimerDefaults()"> <span class="text-xs py-1" style="color:#000">min focus</span> <label for="timerBreakMins" class="sr-only">Break minutes</label> <input id="timerBreakMins" type="number" min="1" max="30" value="5" class="w-20 px-2 py-1 rounded text-xs text-center" style="background:#fff;color:#000;border:none" onchange="updateTimerDefaults()"> <span class="text-xs py-1" style="color:#000">min break</span>
+      </div>
+      <p id="timerLabel" class="text-xs mb-4 glow-text" style="color:#000">Focus Time</p>
+      <div id="timerDisplay" class="mono text-6xl font-bold my-6 glow-text" style="color:#000">
+       25:00
+      </div>
+      <div class="flex justify-center gap-3">
+       <button onclick="toggleTimer()" id="timerBtn" class="gradient-accent px-6 py-2 rounded-lg text-sm font-medium text-white" style="background:linear-gradient(135deg, #00d4ff 0%, #06b6d4 100%);color:#000">Start</button> <button onclick="resetTimer()" style="background:#fff;color:#00d4ff" class="px-6 py-2 rounded-lg text-sm font-medium font-bold">Reset</button>
+      </div>
+      <div class="flex justify-center gap-4 mt-4">
+       <span class="text-xs" style="color:#000">Sessions: <span id="sessionCount" class="font-bold glow-text" style="color:#000">0</span></span>
+      </div>
+     </div>
+    </section><!-- QUIZ PAGE -->
+    <section id="page-quiz" class="page fade-in hidden">
+     <div style="background:var(--c-surface)" class="rounded-xl p-5">
+      <h2 class="font-bold text-base mb-4 flex items-center gap-2"><i data-lucide="help-circle" style="width:18px;height:18px;color:var(--c-accent)"></i>Quick Quiz</h2>
+      <div id="quizArea"></div>
+      <div id="quizResult" class="hidden text-center py-8">
+       <div class="text-4xl mb-2">
+        🎉
+       </div>
+       <p class="font-bold text-lg" id="quizScore" style="color:#000"></p><button onclick="startQuiz()" style="background:#fff;color:#00ff88" class="mt-4 px-6 py-2 rounded-lg text-sm font-medium font-bold">Try Again</button>
+      </div>
+     </div>
+    </section><!-- SCHEDULE PAGE -->
+    <section id="page-schedule" class="page fade-in hidden">
+     <div style="background:linear-gradient(135deg, #ffd700 0%, #ffde4d 100%);border-radius:12px;padding:20px">
+      <h2 class="font-bold text-base mb-4 flex items-center gap-2" style="color:#000"><i data-lucide="calendar" style="width:18px;height:18px;color:#000"></i>Daily Schedule</h2>
+      <form onsubmit="addScheduleItem(event)" class="flex gap-2 mb-4 flex-wrap">
+       <label for="schedTime" class="sr-only">Time</label> <input id="schedTime" type="time" class="px-3 py-2 rounded-lg text-sm" style="background:#fff;color:#000;border:none" required> <label for="schedSubject" class="sr-only">Subject</label> <input id="schedSubject" type="text" placeholder="Subject / Activity" class="flex-1 min-w-[140px] px-3 py-2 rounded-lg text-sm" style="background:#fff;color:#000;border:none" required> <button type="submit" style="background:#fff;color:#ffd700" class="px-4 py-2 rounded-lg text-sm font-medium font-bold">Add</button>
+      </form>
+      <div id="scheduleList" class="space-y-2"></div>
+      <p id="schedEmpty" class="text-center text-xs py-6" style="color:#000">No classes added yet</p>
+     </div>
+    </section><!-- NOTES PAGE -->
+    <section id="page-notes" class="page fade-in hidden">
+     <div style="background:linear-gradient(135deg, #ff6b35 0%, #ff8f5e 100%);border-radius:12px;padding:20px">
+      <h2 class="font-bold text-base mb-4 flex items-center gap-2" style="color:#fff"><i data-lucide="file-text" style="width:18px;height:18px;color:#fff"></i>Notes</h2>
+      <form onsubmit="saveNote(event)" class="mb-4">
+       <label for="noteTitle" class="sr-only">Note title</label> <input id="noteTitle" type="text" placeholder="Title" class="w-full px-3 py-2 rounded-lg text-sm mb-2" style="background:#fff;color:#000;border:none" required> <label for="noteBody" class="sr-only">Note content</label> <textarea id="noteBody" placeholder="Write your note..." class="w-full px-3 py-2 rounded-lg text-sm h-24 resize-none" style="background:#fff;color:#000;border:none" required></textarea> <button type="submit" style="background:#fff;color:#ff6b35" class="mt-2 px-4 py-2 rounded-lg text-sm font-medium font-bold">Save Note</button>
+      </form>
+      <div id="notesList" class="space-y-2"></div>
+      <p id="notesEmpty" class="text-center text-xs py-6" style="color:#fff">No notes saved yet</p>
+     </div>
+    </section><!-- QUOTES PAGE -->
+    <section id="page-quotes" class="page fade-in hidden">
+     <div style="background:linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%);border-radius:12px;padding:20px" class="text-center">
+      <h2 class="font-bold text-base mb-6 flex items-center justify-center gap-2" style="color:#fff"><i data-lucide="sparkles" style="width:18px;height:18px;color:#fff"></i>Motivation Boost</h2>
+      <div class="py-8">
+       <div class="text-3xl mb-4">
+        💡
+       </div>
+       <p id="quoteText" class="text-lg font-medium italic px-4" style="color:#fff">"The only way to do great work is to love what you do."</p>
+       <p id="quoteAuthor" class="text-xs mt-3" style="color:#fff">— Steve Jobs</p>
+      </div><button onclick="newQuote()" style="background:#fff;color:#a78bfa" class="px-6 py-2 rounded-lg text-sm font-medium font-bold">New Quote</button>
+     </div>
+    </section><!-- CHESS GAME PAGE -->
+    <section id="page-chess" class="page fade-in hidden">
+     <div style="background:linear-gradient(135deg, #f87171 0%, #fb7185 100%);border-radius:12px;padding:20px">
+      <h2 class="font-bold text-base mb-4 flex items-center justify-center gap-2" style="color:#fff"><i data-lucide="crown" style="width:18px;height:18px;color:#fff"></i>Chess Game</h2>
+      <div id="chessSetup" class="text-center">
+       <p class="text-sm mb-4" style="color:#fff">Play as White. AI plays Black.</p>
+       <div class="flex gap-2 justify-center mb-4">
+        <label for="chessLevel" class="sr-only">Difficulty</label> <select id="chessLevel" class="px-3 py-2 rounded-lg text-sm" style="background:#fff;color:#000;border:none"> <option value="easy">Easy</option> <option value="medium" selected>Medium</option> <option value="hard">Hard</option> </select>
+       </div><button onclick="startChessGame()" style="background:#fff;color:#f87171" class="px-6 py-2 rounded-lg text-sm font-medium font-bold">New Game</button>
+      </div>
+      <div id="chessGame" class="hidden">
+       <div class="flex justify-between items-center mb-3 text-xs">
+        <span id="chessTurnText" style="color:#fff">White to move</span> <span style="color:#fff"><span id="chessBlackCap">♟</span></span>
+       </div>
+       <div id="chessBoard" class="inline-block mx-auto mb-4 rounded-lg overflow-hidden shadow-lg" style="border:3px solid #fff"></div>
+       <div class="text-center mb-3">
+        <p id="chessMessage" class="text-xs" style="color:#fff"></p>
+       </div>
+       <div class="flex justify-center gap-2">
+        <button onclick="undoChessMove()" style="background:#fff;color:#f87171" class="px-4 py-2 rounded-lg text-xs font-medium font-bold">Undo</button> <button onclick="resetChessGame()" style="background:#fff;color:#f87171" class="px-4 py-2 rounded-lg text-xs font-medium font-bold">Reset</button>
+       </div>
+      </div>
+     </div>
+    </section><!-- MATH GAME PAGE -->
+    <section id="page-game" class="page fade-in hidden">
+     <div style="background:linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%);border-radius:12px;padding:20px" class="text-center">
+      <h2 class="font-bold text-base mb-4 flex items-center justify-center gap-2" style="color:#000"><i data-lucide="gamepad-2" style="width:18px;height:18px;color:#000"></i>Speed Math</h2>
+      <div id="gameSetup">
+       <p class="text-sm mb-4" style="color:#000">Solve as many as you can in 30 seconds!</p>
+       <div class="flex gap-2 justify-center mb-4">
+        <label for="gameDifficulty" class="sr-only">Difficulty</label> <select id="gameDifficulty" class="px-3 py-2 rounded-lg text-sm" style="background:#fff;color:#000;border:none"> <option value="easy">Easy (+−)</option><option value="medium" selected>Medium (+−×)</option><option value="hard">Hard (+−×÷)</option> </select>
+       </div><button onclick="startGame()" style="background:#fff;color:#06b6d4" class="px-6 py-2 rounded-lg text-sm font-medium font-bold">Start!</button>
+      </div>
+      <div id="gamePlay" class="hidden">
+       <div class="flex justify-between items-center mb-4">
+        <span class="mono text-sm" style="color:#000">⏱ <span id="gameTimer">30</span>s</span> <span class="text-sm" style="color:#000">Score: <span id="gameScore" class="font-bold" style="color:#000">0</span></span>
+       </div>
+       <p id="gameProblem" class="mono text-4xl font-bold my-6" style="color:#000"></p>
+       <div id="gameChoices" class="grid grid-cols-2 gap-2 max-w-xs mx-auto"></div>
+       <div id="gameFeedback" class="text-sm mt-3 h-5" style="color:#000"></div>
+      </div>
+      <div id="gameOver" class="hidden py-6">
+       <div class="text-4xl mb-2">
+        🏆
+       </div>
+       <p class="font-bold text-lg" style="color:#000">Game Over!</p>
+       <p class="text-sm mt-1" style="color:#000">You scored <span id="finalGameScore" class="font-bold" style="color:#000"></span> points</p>
+       <p class="text-xs mt-1" style="color:#000">Best: <span id="gameBest" class="font-bold">0</span></p><button onclick="startGame()" style="background:#fff;color:#06b6d4" class="mt-4 px-6 py-2 rounded-lg text-sm font-medium font-bold">Play Again</button>
+      </div>
+     </div>
+    </section>
+   </main>
+  </div>
+  <script>
+// ── State ──
+let tasks=[], schedItems=[], notes=[], currentPage='todo';
+
+// ── Navigation ──
+function showPage(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+ const pg=document.getElementById('page-'+id);
+ if(pg){pg.classList.remove('hidden');pg.classList.remove('fade-in');void pg.offsetWidth;pg.classList.add('fade-in');}
+ document.querySelectorAll('[data-nav]').forEach(b=>{
+  b.style.boxShadow=b.dataset.nav===id?'0 0 0 2px var(--c-accent)':'none';
+ });
+ currentPage=id;
+ if(id==='quiz'&&!quizStarted)startQuiz();
+}
+
+// ── TODO ──
+function loadTasks(){const s=localStorage.getItem('sh_tasks');if(s)tasks=JSON.parse(s);}
+function saveTasks(){localStorage.setItem('sh_tasks',JSON.stringify(tasks));}
+function renderTasks(){
+ const ul=document.getElementById('taskList'),empty=document.getElementById('taskEmpty');
+ ul.innerHTML='';empty.classList.toggle('hidden',tasks.length>0);
+ tasks.forEach((t,i)=>{
+  const li=document.createElement('li');li.className='task-item flex items-center gap-2 p-2 rounded-lg';li.style.background='rgba(255,255,255,0.2)';
+  li.innerHTML=`<button onclick="toggleTask(${i})" class="w-5 h-5 rounded border flex-shrink-0 flex items-center justify-center" style="border-color:${t.done?'#fff':'rgba(255,255,255,0.5)'};background:${t.done?'#fff':'transparent'};color:#ff6b9d">${t.done?'<i data-lucide="check" style="width:12px;height:12px;color:#ff6b9d"></i>':''}</button><span class="flex-1 text-sm" style="color:#fff;${t.done?'text-decoration:line-through;opacity:0.6':''}">${esc(t.text)}</span><button onclick="removeTask(${i})" class="text-xs px-2 py-1 rounded" style="color:#fff">✕</button>`;
+  ul.appendChild(li);
+ });
+ lucide.createIcons();
+}
+function addTask(e){e.preventDefault();const inp=document.getElementById('taskInput');if(!inp.value.trim())return;tasks.unshift({text:inp.value.trim(),done:false});inp.value='';saveTasks();renderTasks();}
+function toggleTask(i){tasks[i].done=!tasks[i].done;saveTasks();renderTasks();}
+function removeTask(i){tasks.splice(i,1);saveTasks();renderTasks();}
+
+// ── POMODORO ──
+let pomTime=25*60,pomRunning=false,pomInterval=null,pomIsBreak=false,pomSessions=0,pomFocusMins=25,pomBreakMins=5;
+function updateTimerDisplay(){
+ const m=Math.floor(pomTime/60),s=pomTime%60;
+ document.getElementById('timerDisplay').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function updateTimerDefaults(){
+ const f=parseInt(document.getElementById('timerFocusMins').value)||25;
+ const b=parseInt(document.getElementById('timerBreakMins').value)||5;
+ pomFocusMins=f;pomBreakMins=b;
+ if(!pomRunning){pomTime=pomFocusMins*60;updateTimerDisplay();}
+}
+function toggleTimer(){
+ if(pomRunning){clearInterval(pomInterval);pomRunning=false;document.getElementById('timerBtn').textContent='Resume';}
+ else{pomRunning=true;document.getElementById('timerBtn').textContent='Pause';pomInterval=setInterval(()=>{pomTime--;updateTimerDisplay();if(pomTime<=0){clearInterval(pomInterval);pomRunning=false;playBeep();if(!pomIsBreak){pomSessions++;document.getElementById('sessionCount').textContent=pomSessions;pomIsBreak=true;pomTime=pomBreakMins*60;document.getElementById('timerLabel').textContent='Break Time ☕';document.getElementById('timerDisplay').style.color='var(--c-secondary)';}else{pomIsBreak=false;pomTime=pomFocusMins*60;document.getElementById('timerLabel').textContent='Focus Time';document.getElementById('timerDisplay').style.color='var(--c-accent)';}updateTimerDisplay();document.getElementById('timerBtn').textContent='Start';}},1000);}
+}
+function resetTimer(){clearInterval(pomInterval);pomRunning=false;pomIsBreak=false;pomTime=pomFocusMins*60;updateTimerDisplay();document.getElementById('timerBtn').textContent='Start';document.getElementById('timerLabel').textContent='Focus Time';document.getElementById('timerDisplay').style.color='var(--c-accent)';}
+function playBeep(){try{const ac=new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator();const g=ac.createGain();o.connect(g);g.connect(ac.destination);o.frequency.value=880;g.gain.value=0.3;o.start();o.stop(ac.currentTime+0.2);}catch(e){}}
+
+// ── QUIZ ──
+const quizData=[
+ {q:"What is the powerhouse of the cell?",opts:["Nucleus","Mitochondria","Ribosome","Golgi Body"],ans:1},
+ {q:"What is the chemical symbol for water?",opts:["H2O","CO2","NaCl","O2"],ans:0},
+ {q:"Who wrote 'Romeo and Juliet'?",opts:["Dickens","Austen","Shakespeare","Twain"],ans:2},
+ {q:"What is 15² ?",opts:["200","225","250","215"],ans:1},
+ {q:"What planet is known as the Red Planet?",opts:["Venus","Jupiter","Mars","Saturn"],ans:2},
+ {q:"What is the speed of light (approx)?",opts:["300,000 km/s","150,000 km/s","500,000 km/s","1,000,000 km/s"],ans:0},
+ {q:"Which element has atomic number 1?",opts:["Helium","Oxygen","Carbon","Hydrogen"],ans:3},
+ {q:"What is the largest ocean?",opts:["Atlantic","Indian","Pacific","Arctic"],ans:2},
+];
+let quizIdx=0,quizScore2=0,quizStarted=false;
+function startQuiz(){quizIdx=0;quizScore2=0;quizStarted=true;document.getElementById('quizResult').classList.add('hidden');showQuestion();}
+function showQuestion(){
+ const area=document.getElementById('quizArea');
+ if(quizIdx>=quizData.length){area.innerHTML='';document.getElementById('quizResult').classList.remove('hidden');document.getElementById('quizScore').textContent=`You got ${quizScore2}/${quizData.length} correct!`;return;}
+ const q=quizData[quizIdx];
+ area.innerHTML=`<p class="text-xs mb-1" style="color:#000">Question ${quizIdx+1}/${quizData.length}</p><p class="font-medium text-sm mb-3" style="color:#000">${q.q}</p><div class="space-y-2">${q.opts.map((o,i)=>`<button onclick="answerQuiz(${i})" class="quiz-opt w-full text-left px-4 py-2.5 rounded-lg text-sm" style="background:#fff;border:2px solid #000;color:#000;font-weight:500">${o}</button>`).join('')}</div>`;
+}
+function answerQuiz(i){
+ const q=quizData[quizIdx];
+ const btns=document.querySelectorAll('.quiz-opt');
+ btns.forEach((b,j)=>{b.disabled=true;if(j===q.ans)b.style.borderColor='#22c55e';if(j===i&&i!==q.ans)b.style.borderColor='#ef4444';});
+ if(i===q.ans)quizScore2++;
+ quizIdx++;setTimeout(showQuestion,600);
+}
+
+// ── SCHEDULE ──
+function loadSchedule(){const s=localStorage.getItem('sh_sched');if(s)schedItems=JSON.parse(s);}
+function saveSchedule(){localStorage.setItem('sh_sched',JSON.stringify(schedItems));}
+function renderSchedule(){
+ const c=document.getElementById('scheduleList'),empty=document.getElementById('schedEmpty');
+ c.innerHTML='';schedItems.sort((a,b)=>a.time.localeCompare(b.time));
+ empty.classList.toggle('hidden',schedItems.length>0);
+ schedItems.forEach((s,i)=>{
+  const d=document.createElement('div');d.className='flex items-center gap-3 p-2 rounded-lg';d.style.background='#fff';
+  d.innerHTML=`<span class="mono text-xs font-bold" style="color:#ffd700;min-width:50px">${s.time}</span><span class="flex-1 text-sm" style="color:#000">${esc(s.subject)}</span><button onclick="removeSched(${i})" class="text-xs px-2 py-1" style="color:#666">✕</button>`;
+  c.appendChild(d);
+ });
+}
+function addScheduleItem(e){e.preventDefault();const t=document.getElementById('schedTime').value,s=document.getElementById('schedSubject').value.trim();if(!t||!s)return;schedItems.push({time:t,subject:s});document.getElementById('schedSubject').value='';saveSchedule();renderSchedule();}
+function removeSched(i){schedItems.splice(i,1);saveSchedule();renderSchedule();}
+
+// ── NOTES ──
+function loadNotes(){const s=localStorage.getItem('sh_notes');if(s)notes=JSON.parse(s);}
+function saveNotesLS(){localStorage.setItem('sh_notes',JSON.stringify(notes));}
+function renderNotes(){
+ const c=document.getElementById('notesList'),empty=document.getElementById('notesEmpty');
+ c.innerHTML='';empty.classList.toggle('hidden',notes.length>0);
+ notes.forEach((n,i)=>{
+  const d=document.createElement('div');d.className='p-3 rounded-lg';d.style.background='#fff';
+  d.innerHTML=`<div class="flex justify-between items-start"><h3 class="font-bold text-sm" style="color:#000">${esc(n.title)}</h3><button onclick="removeNote(${i})" class="text-xs" style="color:#ff6b35">✕</button></div><p class="text-xs mt-1" style="color:#666;white-space:pre-wrap">${esc(n.body)}</p>`;
+  c.appendChild(d);
+ });
+}
+function saveNote(e){e.preventDefault();const t=document.getElementById('noteTitle'),b=document.getElementById('noteBody');if(!t.value.trim()||!b.value.trim())return;notes.unshift({title:t.value.trim(),body:b.value.trim()});t.value='';b.value='';saveNotesLS();renderNotes();}
+function removeNote(i){notes.splice(i,1);saveNotesLS();renderNotes();}
+
+// ── QUOTES ──
+const quotes=[
+ {t:"The only way to do great work is to love what you do.",a:"Steve Jobs"},
+ {t:"Education is the most powerful weapon which you can use to change the world.",a:"Nelson Mandela"},
+ {t:"It does not matter how slowly you go as long as you do not stop.",a:"Confucius"},
+ {t:"The future belongs to those who believe in the beauty of their dreams.",a:"Eleanor Roosevelt"},
+ {t:"Success is not final, failure is not fatal: it is the courage to continue that counts.",a:"Winston Churchill"},
+ {t:"In the middle of difficulty lies opportunity.",a:"Albert Einstein"},
+ {t:"The expert in anything was once a beginner.",a:"Helen Hayes"},
+ {t:"You don't have to be great to start, but you have to start to be great.",a:"Zig Ziglar"},
+ {t:"Believe you can and you're halfway there.",a:"Theodore Roosevelt"},
+ {t:"The best time to plant a tree was 20 years ago. The second best time is now.",a:"Chinese Proverb"},
+];
+let lastQuoteIdx=-1;
+function newQuote(){let i;do{i=Math.floor(Math.random()*quotes.length);}while(i===lastQuoteIdx&&quotes.length>1);lastQuoteIdx=i;document.getElementById('quoteText').textContent=`"${quotes[i].t}"`;document.getElementById('quoteAuthor').textContent=`— ${quotes[i].a}`;}
+
+// ── CHESS CLOCK ──
+let chessW=300,chessB=300,chessTurn=null,chessInterval=null,chessDefaultMins=5;
+function fmtChess(s){const m=Math.floor(s/60);return`${m}:${String(s%60).padStart(2,'0')}`;}
+function updateChessDisplay(){document.getElementById('whiteTime').textContent=fmtChess(chessW);document.getElementById('blackTime').textContent=fmtChess(chessB);}
+function hitChess(side){
+ if(chessW<=0||chessB<=0)return;
+ clearInterval(chessInterval);
+ if(side==='white'){chessTurn='black';document.getElementById('chessWhite').style.opacity='0.5';document.getElementById('chessBlack').style.opacity='1';}
+ else{chessTurn='white';document.getElementById('chessBlack').style.opacity='0.5';document.getElementById('chessWhite').style.opacity='1';}
+ document.getElementById('chessStatus').textContent=chessTurn.charAt(0).toUpperCase()+chessTurn.slice(1)+"'s turn";
+ chessInterval=setInterval(()=>{
+  if(chessTurn==='white')chessW--;else chessB--;
+  updateChessDisplay();
+  if(chessW<=0){clearInterval(chessInterval);document.getElementById('chessStatus').textContent='⏰ White ran out — Black wins!';document.getElementById('chessStatus').style.color='var(--c-accent)';playBeep();}
+  if(chessB<=0){clearInterval(chessInterval);document.getElementById('chessStatus').textContent='⏰ Black ran out — White wins!';document.getElementById('chessStatus').style.color='var(--c-accent)';playBeep();}
+ },1000);
+}
+function pauseChess(){clearInterval(chessInterval);chessTurn=null;document.getElementById('chessStatus').textContent='Paused';document.getElementById('chessWhite').style.opacity='1';document.getElementById('chessBlack').style.opacity='1';}
+function resetChess(){clearInterval(chessInterval);chessTurn=null;const mins=parseInt(document.getElementById('chessMinutes').value);chessDefaultMins=mins;chessW=mins*60;chessB=mins*60;updateChessDisplay();document.getElementById('chessStatus').textContent='Tap a side to start';document.getElementById('chessStatus').style.color='#888';document.getElementById('chessWhite').style.opacity='1';document.getElementById('chessBlack').style.opacity='1';}
+
+// ── CHESS GAME ──
+const pieces={p:'♟',n:'♞',b:'♝',r:'♜',q:'♛',k:'♚',P:'♙',N:'♘',B:'♗',R:'♖',Q:'♕',K:'♔'};
+let chessBoard,chessHistory=[],chessSelectedSquare=null,chessValidMoves=[],chessGameActive=false;
+const startFEN='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+function fenToBoard(fen){
+ const b=Array(64).fill(null);let idx=0;const pos=fen.split(' ')[0];
+ for(let i=0;i<pos.length;i++){
+  const c=pos[i];
+  if(c==='/'){idx=Math.ceil(idx/8)*8;continue;}
+  if(/\d/.test(c)){idx+=parseInt(c);}
+  else{b[idx]=c;idx++;}
+ }
+ return b;
+}
+
+function boardToFen(){
+ let fen='';
+ for(let r=0;r<8;r++){
+  let empty=0;
+  for(let c=0;c<8;c++){
+   const p=chessBoard[r*8+c];
+   if(!p)empty++;
+   else{if(empty){fen+=empty;empty=0;}fen+=p;}
+  }
+  if(empty)fen+=empty;
+  if(r<7)fen+='/';
+ }
+ return fen;
+}
+
+function sqToCoord(sq){return String.fromCharCode(97+sq%8)+String(8-Math.floor(sq/8));}
+function coordToSq(c){return(8-parseInt(c[1]))*8+(c.charCodeAt(0)-97);}
+
+function getPieceMoves(sq,piece){
+ const moves=[];const r=Math.floor(sq/8),c=sq%8;const isWhite=/[A-Z]/.test(piece);
+ const add=(nr,nc)=>{if(nr>=0&&nr<8&&nc>=0&&nc<8){const nsq=nr*8+nc;const target=chessBoard[nsq];if(!target||(/[a-z]/.test(target))!==isWhite)moves.push(nsq);}};
+ const slide=(dr,dc)=>{for(let i=1;i<8;i++){const nr=r+dr*i,nc=c+dc*i;if(nr<0||nr>=8||nc<0||nc>=8)break;const nsq=nr*8+nc;const t=chessBoard[nsq];if(!t)moves.push(nsq);else{if((/[a-z]/.test(t))!==isWhite)moves.push(nsq);break;}}};
+ const p=piece.toLowerCase();
+ if(p==='p'){const dir=isWhite?-1:1;const sr=isWhite?6:1;if(r+dir>=0&&r+dir<8&&!chessBoard[(r+dir)*8+c])moves.push((r+dir)*8+c);if(r===sr&&!chessBoard[(r+dir)*8+c]&&!chessBoard[(r+2*dir)*8+c])moves.push((r+2*dir)*8+c);if(r+dir>=0&&r+dir<8&&c-1>=0){const t=chessBoard[(r+dir)*8+c-1];if(t&&(/[a-z]/.test(t))!==isWhite)moves.push((r+dir)*8+c-1);}if(r+dir>=0&&r+dir<8&&c+1<8){const t=chessBoard[(r+dir)*8+c+1];if(t&&(/[a-z]/.test(t))!==isWhite)moves.push((r+dir)*8+c+1);}}
+ else if(p==='n'){const offsets=[[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]];offsets.forEach(([dr,dc])=>add(r+dr,c+dc));}
+ else if(p==='b'){slide(1,1);slide(1,-1);slide(-1,1);slide(-1,-1);}
+ else if(p==='r'){slide(1,0);slide(-1,0);slide(0,1);slide(0,-1);}
+ else if(p==='q'){slide(1,0);slide(-1,0);slide(0,1);slide(0,-1);slide(1,1);slide(1,-1);slide(-1,1);slide(-1,-1);}
+ else if(p==='k'){for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++)if(dr||dc)add(r+dr,c+dc);}
+ return moves;
+}
+
+function makeMove(from,to){
+ if(chessBoard[to]&&/[A-Z]/.test(chessBoard[to])+/[A-Z]/.test(chessBoard[from])===1){}
+ chessHistory.push([...chessBoard]);
+ const p=chessBoard[from];chessBoard[to]=p;chessBoard[from]=null;
+ const isWhite=/[A-Z]/.test(p);
+ if(p.toLowerCase()==='p'&&((isWhite&&Math.floor(to/8)===0)||(isWhite||Math.floor(to/8)===7))){chessBoard[to]=(isWhite?'Q':'q');}
+}
+
+function isInCheck(isWhiteKing){
+ const ki=chessBoard.indexOf(isWhiteKing?'K':'k');
+ if(ki===-1)return false;
+ for(let sq=0;sq<64;sq++){
+  const p=chessBoard[sq];
+  if(!p||((/[A-Z]/.test(p))===isWhiteKing))continue;
+  if(getPieceMoves(sq,p).includes(ki))return true;
+ }
+ return false;
+}
+
+function getAIMove(){
+ const moves=[];
+ for(let sq=0;sq<64;sq++){
+  const p=chessBoard[sq];
+  if(!p||!/[a-z]/.test(p))continue;
+  getPieceMoves(sq,p).forEach(to=>{
+   makeMove(sq,to);
+   const inCheck=isInCheck(true);
+   chessBoard=[...chessHistory.pop()];
+   if(!inCheck)moves.push([sq,to]);
+  });
+ }
+ if(moves.length===0)return null;
+ const level=document.getElementById('chessLevel')?.value||'medium';
+ let move;
+ if(level==='easy'){move=moves[Math.floor(Math.random()*moves.length)];}
+ else if(level==='medium'){const captures=moves.filter(m=>chessBoard[m[1]]);if(captures.length&&Math.random()>0.4)move=captures[Math.floor(Math.random()*captures.length)];else move=moves[Math.floor(Math.random()*moves.length)];}
+ else{const captures=moves.filter(m=>chessBoard[m[1]]);const checks=moves.filter(m=>{makeMove(m[0],m[1]);const c=isInCheck(true);chessBoard=[...chessHistory.pop()];return c;});if(checks.length)move=checks[0];else if(captures.length)move=captures[0];else move=moves[0];}
+ return move;
+}
+
+function drawChessBoard(){
+ const b=document.getElementById('chessBoard');b.innerHTML='';
+ const t=document.createElement('table');t.style.borderCollapse='collapse';t.style.margin='0';
+ for(let r=0;r<8;r++){
+  const tr=document.createElement('tr');
+  for(let c=0;c<8;c++){
+   const sq=r*8+c;const td=document.createElement('td');
+   const isDark=(r+c)%2===1;
+   td.style.width='40px';td.style.height='40px';td.style.textAlign='center';td.style.lineHeight='40px';
+   td.style.background=isDark?'#1a2f4a':'#2d4a6f';
+   td.style.cursor='pointer';td.style.fontSize='28px';td.style.userSelect='none';
+   if(chessValidMoves.includes(sq))td.style.boxShadow=`inset 0 0 0 2px var(--c-accent3)`;
+   if(chessSelectedSquare===sq)td.style.background=`var(--c-accent2)`;
+   td.textContent=chessBoard[sq]?pieces[chessBoard[sq]]:'';
+   td.onclick=()=>selectSquare(sq);
+   tr.appendChild(td);
+  }
+  t.appendChild(tr);
+ }
+ b.appendChild(t);
+}
+
+function selectSquare(sq){
+ const piece=chessBoard[sq];
+ if(chessSelectedSquare===null){
+  if(piece&&/[A-Z]/.test(piece)){
+   chessSelectedSquare=sq;chessValidMoves=getPieceMoves(sq,piece);drawChessBoard();
+  }
+ }else if(chessSelectedSquare===sq){
+  chessSelectedSquare=null;chessValidMoves=[];drawChessBoard();
+ }else if(chessValidMoves.includes(sq)){
+  makeMove(chessSelectedSquare,sq);chessSelectedSquare=null;chessValidMoves=[];
+  document.getElementById('chessTurnText').textContent='Black thinking...';document.getElementById('chessTurnText').style.color='var(--c-accent2)';
+  drawChessBoard();
+  setTimeout(()=>{
+   const aiMove=getAIMove();
+   if(!aiMove){document.getElementById('chessMessage').textContent='Checkmate! You won! 🎉';chessGameActive=false;}
+   else{makeMove(aiMove[0],aiMove[1]);const inCheck=isInCheck(false);if(inCheck){const wMoves=[];for(let s=0;s<64;s++){const p=chessBoard[s];if(!p||!/[a-z]/.test(p))continue;if(getPieceMoves(s,p).length>0){wMoves.push(s);break;}}if(wMoves.length===0){document.getElementById('chessMessage').textContent='Checkmate! Black won.';chessGameActive=false;}else document.getElementById('chessMessage').textContent='You\'re in check!';}else document.getElementById('chessMessage').textContent='';}
+   document.getElementById('chessTurnText').textContent='White to move';document.getElementById('chessTurnText').style.color='var(--c-accent3)';
+   drawChessBoard();
+  },500);
+ }else{chessSelectedSquare=null;chessValidMoves=[];drawChessBoard();}
+}
+
+function startChessGame(){
+ chessBoard=fenToBoard(startFEN);chessHistory=[];chessSelectedSquare=null;chessValidMoves=[];chessGameActive=true;
+ document.getElementById('chessSetup').classList.add('hidden');
+ document.getElementById('chessGame').classList.remove('hidden');
+ document.getElementById('chessTurnText').textContent='White to move';
+ document.getElementById('chessMessage').textContent='';
+ drawChessBoard();
+}
+
+function undoChessMove(){
+ if(chessHistory.length===0)return;
+ chessBoard=chessHistory.pop();chessSelectedSquare=null;chessValidMoves=[];drawChessBoard();
+}
+
+function resetChessGame(){
+ document.getElementById('chessSetup').classList.remove('hidden');
+ document.getElementById('chessGame').classList.add('hidden');
+ chessGameActive=false;
+}
+
+// ── MATH GAME ──
+let gameTimer2=null,gameTime=30,gameScoreVal=0,gameAnswer=0,gameBest=parseInt(localStorage.getItem('sh_mathbest')||'0');
+document.getElementById('gameBest')&&(document.getElementById('gameBest').textContent=gameBest);
+function genProblem(){
+ const diff=document.getElementById('gameDifficulty').value;
+ let a,b,op,ans;
+ const ops=diff==='easy'?['+','-']:diff==='medium'?['+','-','×']:['+','-','×','÷'];
+ op=ops[Math.floor(Math.random()*ops.length)];
+ if(op==='+'){a=Math.floor(Math.random()*50)+1;b=Math.floor(Math.random()*50)+1;ans=a+b;}
+ else if(op==='-'){a=Math.floor(Math.random()*50)+10;b=Math.floor(Math.random()*a)+1;ans=a-b;}
+ else if(op==='×'){a=Math.floor(Math.random()*12)+1;b=Math.floor(Math.random()*12)+1;ans=a*b;}
+ else{b=Math.floor(Math.random()*12)+1;ans=Math.floor(Math.random()*12)+1;a=b*ans;}
+ return{text:`${a} ${op} ${b}`,ans};
+}
+function showProblem(){
+ const p=genProblem();gameAnswer=p.ans;
+ document.getElementById('gameProblem').textContent=p.text+' = ?';
+ const wrongs=new Set();while(wrongs.size<3){let w=p.ans+Math.floor(Math.random()*11)-5;if(w!==p.ans&&w>=0)wrongs.add(w);}
+ const choices=[p.ans,...wrongs];choices.sort(()=>Math.random()-0.5);
+ const c=document.getElementById('gameChoices');c.innerHTML='';
+ choices.forEach(v=>{
+  const b=document.createElement('button');b.className='px-4 py-3 rounded-lg text-sm font-bold mono';b.style.background='var(--c-bg)';b.style.border='1px solid #2a2d3a';b.textContent=v;
+  b.onclick=()=>checkGameAnswer(v,b);c.appendChild(b);
+ });
+ document.getElementById('gameFeedback').textContent='';
+}
+function checkGameAnswer(v,btn){
+ if(v===gameAnswer){gameScoreVal++;document.getElementById('gameScore').textContent=gameScoreVal;document.getElementById('gameFeedback').textContent='✓ Correct!';document.getElementById('gameFeedback').style.color='#22c55e';showProblem();}
+ else{btn.style.borderColor='#ef4444';document.getElementById('gameFeedback').textContent='✗ Try again';document.getElementById('gameFeedback').style.color='#ef4444';}
+}
+function startGame(){
+ gameScoreVal=0;gameTime=30;document.getElementById('gameScore').textContent='0';document.getElementById('gameTimer').textContent='30';
+ document.getElementById('gameSetup').classList.add('hidden');document.getElementById('gameOver').classList.add('hidden');document.getElementById('gamePlay').classList.remove('hidden');
+ showProblem();
+ clearInterval(gameTimer2);
+ gameTimer2=setInterval(()=>{gameTime--;document.getElementById('gameTimer').textContent=gameTime;if(gameTime<=0){clearInterval(gameTimer2);endGame();}},1000);
+}
+function endGame(){
+ document.getElementById('gamePlay').classList.add('hidden');document.getElementById('gameOver').classList.remove('hidden');
+ document.getElementById('finalGameScore').textContent=gameScoreVal;
+ if(gameScoreVal>gameBest){gameBest=gameScoreVal;localStorage.setItem('sh_mathbest',gameBest);}
+ document.getElementById('gameBest').textContent=gameBest;
+}
+
+// ── Utility ──
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+// ── Init ──
+const defaultConfig={site_title:'Student Hub',welcome_message:'Your all-in-one student toolkit',timer_focus_mins:'25',timer_break_mins:'5',chess_default_mins:'5',background_color:'#0f1117',surface_color:'#1a1d27',text_color:'#e8e6e3',accent_color:'#ff6b35',secondary_color:'#6c63ff',font_family:'DM Sans',font_size:14};
+
+function applyConfig(cfg){
+ document.documentElement.style.setProperty('--c-bg',cfg.background_color||defaultConfig.background_color);
+ document.documentElement.style.setProperty('--c-surface',cfg.surface_color||defaultConfig.surface_color);
+ document.documentElement.style.setProperty('--c-text',cfg.text_color||defaultConfig.text_color);
+ document.documentElement.style.setProperty('--c-accent',cfg.accent_color||defaultConfig.accent_color);
+ document.documentElement.style.setProperty('--c-secondary',cfg.secondary_color||defaultConfig.secondary_color);
+ const f=cfg.font_family||defaultConfig.font_family;
+ document.body.style.fontFamily=`${f}, DM Sans, sans-serif`;
+ const sz=cfg.font_size||defaultConfig.font_size;
+ document.body.style.fontSize=sz+'px';
+ document.getElementById('siteTitle').textContent=cfg.site_title||defaultConfig.site_title;
+ document.getElementById('welcomeMsg').textContent=cfg.welcome_message||defaultConfig.welcome_message;
+ const f_mins=parseInt(cfg.timer_focus_mins)||25;
+ const b_mins=parseInt(cfg.timer_break_mins)||5;
+ document.getElementById('timerFocusMins').value=f_mins;
+ document.getElementById('timerBreakMins').value=b_mins;
+ pomFocusMins=f_mins;pomBreakMins=b_mins;
+ const c_mins=parseInt(cfg.chess_default_mins)||5;
+ document.getElementById('chessMinutes').value=c_mins;
+ chessDefaultMins=c_mins;
+}
+
+if(window.elementSdk){
+ window.elementSdk.init({
+  defaultConfig,
+  onConfigChange:async(cfg)=>applyConfig(cfg),
+  mapToCapabilities:(cfg)=>({
+   recolorables:[
+    {get:()=>cfg.background_color||defaultConfig.background_color,set:v=>{cfg.background_color=v;window.elementSdk.setConfig({background_color:v})}},
+    {get:()=>cfg.surface_color||defaultConfig.surface_color,set:v=>{cfg.surface_color=v;window.elementSdk.setConfig({surface_color:v})}},
+    {get:()=>cfg.text_color||defaultConfig.text_color,set:v=>{cfg.text_color=v;window.elementSdk.setConfig({text_color:v})}},
+    {get:()=>cfg.accent_color||defaultConfig.accent_color,set:v=>{cfg.accent_color=v;window.elementSdk.setConfig({accent_color:v})}},
+    {get:()=>cfg.secondary_color||defaultConfig.secondary_color,set:v=>{cfg.secondary_color=v;window.elementSdk.setConfig({secondary_color:v})}},
+   ],
+   borderables:[],
+   fontEditable:{get:()=>cfg.font_family||defaultConfig.font_family,set:v=>{cfg.font_family=v;window.elementSdk.setConfig({font_family:v})}},
+   fontSizeable:{get:()=>cfg.font_size||defaultConfig.font_size,set:v=>{cfg.font_size=v;window.elementSdk.setConfig({font_size:v})}},
+  }),
+  mapToEditPanelValues:(cfg)=>new Map([
+   ['site_title',cfg.site_title||defaultConfig.site_title],
+   ['welcome_message',cfg.welcome_message||defaultConfig.welcome_message],
+   ['timer_focus_mins',cfg.timer_focus_mins||defaultConfig.timer_focus_mins],
+   ['timer_break_mins',cfg.timer_break_mins||defaultConfig.timer_break_mins],
+   ['chess_default_mins',cfg.chess_default_mins||defaultConfig.chess_default_mins],
+  ])
+ });
+}
+
+loadTasks();renderTasks();loadSchedule();renderSchedule();loadNotes();renderNotes();
+lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ec85d645292146b',t:'MTc3NjIyODk5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
